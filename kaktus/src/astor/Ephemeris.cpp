@@ -1,19 +1,19 @@
-#include "kaktus/util.h"
+#include "kaktus/astor/Ephemeris.h"
 #include <cmath>
 #include <tudat/astro/basic_astro/orbitalElementConversions.h>
-#include <tudat/astro/ephemerides/ephemeris.h>
+//#include <tudat/astro/ephemerides/ephemeris.h>
 namespace kaktus
 {
-	namespace astro
+	namespace astor
 	{
-		class AprxEphemeris :public tudat::ephemerides::Ephemeris
+		class AprxEphemeris :public Ephemeris
 		{
 		private:
 			const double AU, TU, Gm;
+			double pt;
 			Eigen::Matrix6d sl;
 			Eigen::Vector6d nke, cs;
 			Eigen::Quaterniond rotationFromOrbitalPlane_;
-			double pt;
 			//fma(v1, v2, t) + v3 * sin(fma(v4, v5, t));
 			//1/sec
 		public:
@@ -35,7 +35,7 @@ namespace kaktus
 			void flushKeplerElements(double time)
 			{
 				time /= TU;
-				if (abs(time - pt) < 1e-3)
+				if (abs(time - pt) < 1e-3)//过滤
 				{
 					return;
 				}
@@ -65,41 +65,45 @@ namespace kaktus
 					Eigen::AngleAxisd(nke(2), Eigen::Vector3d::UnitX()) *
 					Eigen::AngleAxisd(nke(3), Eigen::Vector3d::UnitZ());
 			}
-			Eigen::Vector6d getCartesianState(double time)
+			void getCartesianState(double time, Eigen::Vector6d &pv)
 			{//改写成相邻时域PCHIP插值
 				flushKeplerElements(time);
-				Eigen::Vector6d currentCartesianState = Eigen::Vector6d::Zero();
 				const double eccentricity_ = nke(1);
 				double cosineOfTrueAnomaly, sineOfTrueAnomaly;
 				{
-				const double meanAnomalyChange =
-					tudat::orbital_element_conversions::convertElapsedTimeToEllipticalMeanAnomalyChange(time, Gm, nke(0));
-				const double eccentricAnomaly =
-					tudat::orbital_element_conversions::convertMeanAnomalyToEccentricAnomaly(eccentricity_,meanAnomalyChange);
-				const double trueAnomaly = 
-					tudat::orbital_element_conversions::convertEccentricAnomalyToTrueAnomaly(eccentricAnomaly, eccentricity_);
-				cosineOfTrueAnomaly = cos(trueAnomaly),
-					sineOfTrueAnomaly = sin(trueAnomaly);
+					const double meanAnomalyChange =
+						tudat::orbital_element_conversions::convertElapsedTimeToEllipticalMeanAnomalyChange(time, Gm, nke(0));
+					const double eccentricAnomaly =
+						tudat::orbital_element_conversions::convertMeanAnomalyToEccentricAnomaly(eccentricity_, meanAnomalyChange);
+					const double trueAnomaly =
+						tudat::orbital_element_conversions::convertEccentricAnomalyToTrueAnomaly(eccentricAnomaly, eccentricity_);
+					cosineOfTrueAnomaly = cos(trueAnomaly), sineOfTrueAnomaly = sin(trueAnomaly);
 				}
-				double semiLatusRectum_ = nke(0)*(1-pow2(eccentricity_));
+				double semiLatusRectum_ = nke(0) * (1 - pow2(eccentricity_));
 
 				// Definition of position in the perifocal coordinate system.
-				currentCartesianState(0) = semiLatusRectum_ * cosineOfTrueAnomaly
+				pv(0) = semiLatusRectum_ * cosineOfTrueAnomaly
 					/ (1.0 + eccentricity_ * cosineOfTrueAnomaly);
-				currentCartesianState(1) = semiLatusRectum_ * sineOfTrueAnomaly
+				pv(1) = semiLatusRectum_ * sineOfTrueAnomaly
 					/ (1.0 + eccentricity_ * cosineOfTrueAnomaly);
 
 				// Definition of velocity in the perifocal coordinate system.
-				currentCartesianState(3) =
+				pv(3) =
 					-sqrt(Gm / semiLatusRectum_) * sineOfTrueAnomaly;
-				currentCartesianState(4) =
+				pv(4) =
 					sqrt(Gm / semiLatusRectum_)
 					* (eccentricity_ + cosineOfTrueAnomaly);
 				// Rotate orbital plane to correct orientation.
-				currentCartesianState.segment(0, 3) = rotationFromOrbitalPlane_ *
-					currentCartesianState.segment(0, 3);
-				currentCartesianState.segment(3, 3) = rotationFromOrbitalPlane_ *
-					currentCartesianState.segment(3, 3);
+				pv.segment(0, 3) = rotationFromOrbitalPlane_ *
+					pv.segment(0, 3);
+				pv.segment(3, 3) = rotationFromOrbitalPlane_ *
+					pv.segment(3, 3);
+			}
+			Eigen::Vector6d getCartesianState(double time)
+			{//改写成相邻时域PCHIP插值
+				Eigen::Vector6d currentCartesianState = Eigen::Vector6d::Zero();
+				getCartesianState(time, currentCartesianState);
+				return currentCartesianState;
 			}
 		};
 	}
