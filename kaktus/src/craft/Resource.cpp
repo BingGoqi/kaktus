@@ -1,28 +1,25 @@
 #include <list>
-namespace kaktus
+namespace kaktus::craft
 {
-	namespace craft
+	//caekit\craft\resource
+	class KStroge
 	{
-		//caekit\craft\resource
-		class KStroge
-		{
-		private:
-			int type, id, priority;//资源种类，容器编号，优先级
-			double stock, size;
-		public:
+	private:
+		int type, id, priority;//资源种类，容器编号，优先级
+		double stock, size;
+	public:
 
-		};
-		class KStrogeState
-		{
-		private:
-			std::list<KStroge> list;
-		public:
-		};
-		class KStrogeTree
-		{
-		private:
-			std::list<KStrogeState> list;
-		public:
-		};
-	}
+	};
+	class KStrogeState
+	{
+	private:
+		std::list<KStroge> list;
+	public:
+	};
+	class KStrogeTree
+	{
+	private:
+		std::list<KStrogeState> list;
+	public:
+	};
 }
