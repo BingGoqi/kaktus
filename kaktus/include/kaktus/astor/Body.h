@@ -2,8 +2,6 @@
 #define KAKTUS_BODY_H
 #include "kaktus/astor/Ephemeris.h"
 #include "kaktus/astor/Model.h"
-#include <cmath>
-#include <string>
 namespace kaktus::astor
 {
 	class Body
@@ -11,6 +9,8 @@ namespace kaktus::astor
 	private:
 		const double RU, TU, MU, VU, FU;
 		const std::string name;
+		double pt;
+		Eigen::Vector6d ps;
 		//int BodyType;
 		//getframe(pva,subframe)
 		std::unordered_map<int, std::vector<std::shared_ptr<model::Model<DataBase,DataBase>>>> modelListMap;
@@ -19,8 +19,8 @@ namespace kaktus::astor
 		Body(std::string name, double MU, double DU)
 			:MU(MU), RU(RU), TU(sqrt(pow3(RU) / invG)), VU(RU / TU), FU(VU / TU),name(name) {}
 		Body(std::string name) :MU(1), RU(1), TU(1), VU(1), FU(1),name(name) {}
-		void setEphemeris(){}
-		void getPosition(Eigen::Vector3d& p, double time)
+		//void setEphemeris(){}
+		void getPosition(Eigen::Vector3d& p, double time)//相对中心天体
 		{
 			eph.getPosition(p, time);
 		}

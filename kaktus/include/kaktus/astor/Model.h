@@ -1,7 +1,6 @@
 #ifndef KAKTUS_MODEL_H
 #define KAKTUS_MODEL_H
 #include "kaktus/util.h"
-#include <vector>
 namespace kaktus::astor::model
 {
 	enum ModelType

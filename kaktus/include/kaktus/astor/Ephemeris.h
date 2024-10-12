@@ -1,7 +1,6 @@
 #ifndef KAKTUS_EPHEMERIS_H
 #define KAKTUS_EPHEMERIS_H
 #include "kaktus/util.h"
-#include <vector>
 namespace kaktus::astor
 {
 	class Ephemeris
@@ -11,6 +10,7 @@ namespace kaktus::astor
 		virtual void getPosition(Eigen::Vector3d& p, double time);
 		virtual void getVelocity(Eigen::Vector3d& v, double time);
 		virtual void getPV(Eigen::Vector6d& v, double time);
+		virtual std::string getBody(double time);
 	};
 	class KepEph :public Ephemeris
 	{
