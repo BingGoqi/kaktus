@@ -6,17 +6,19 @@ namespace kaktus::astor
 	class Ephemeris
 	{
 	private:
+		double t0, star, end;
 	public:
 		virtual void getPosition(Eigen::Vector3d& p, double time);
 		virtual void getVelocity(Eigen::Vector3d& v, double time);
 		virtual void getPV(Eigen::Vector6d& v, double time);
 		virtual std::string getBody(double time);
+		virtual double getStep(double time);
 	};
-	class KepEph :public Ephemeris
+	class BattinEphemeris :public Ephemeris
 	{
 	private:
-		Eigen::Vector6d& Kel;
-
+		Eigen::Vector3d pa, pav;
+		double r, al;
 	public:
 	};
 	class ConstEphemeris

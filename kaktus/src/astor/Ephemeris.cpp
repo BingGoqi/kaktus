@@ -16,6 +16,9 @@ namespace kaktus::astor
 		//1/sec
 	public:
 		AprxEphemeris(double AU, double Gm) :AU(AU), Gm(Gm), TU(sqrt(pow3(AU) / Gm)) {
+			//参考aprx_pos_planets_pdf
+			//改成使用拉格朗日系数计算
+			//e=0是pa定义为升交点或春分点
 			pt = 0;
 			sl = Eigen::Matrix6d::Zero();
 			nke = Eigen::Vector6d::Zero();
@@ -33,7 +36,7 @@ namespace kaktus::astor
 		void flushKeplerElements(double time)
 		{
 			time /= TU;
-			if (abs(time - pt) < 1e-3)//过滤
+			if (abs(time - pt) < 1e-3)
 			{
 				return;
 			}
@@ -53,7 +56,7 @@ namespace kaktus::astor
 					nke[i] += sl(i, 3) * sin(fma(sl(i, 4), time, sl(i, 5))); break;
 				}
 			}
-			nke(0) *= AU;
+			//nke(0) *= AU;
 			nke(5) = fmod(nke(5), TAU);
 			nke(1) = fmod(nke(1), 1);
 			nke(5) = tudat::orbital_element_conversions::convertMeanAnomalyToTrueAnomaly(nke(1), nke(5));
@@ -104,4 +107,5 @@ namespace kaktus::astor
 			return currentCartesianState;
 		}
 	};
+
 }
