@@ -1,0 +1,16 @@
+bodis:
+ -
+  ssb:
+   type: 1
+   sup: static
+   eph: ssb
+   gm: ssb
+ -
+  name: sun
+  sup: ssb
+  eph: pxor
+  gm: point
+eph: 
+-
+ name:ssb
+ type:

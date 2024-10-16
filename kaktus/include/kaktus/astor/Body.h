@@ -4,33 +4,21 @@
 #include "kaktus/astor/Model.h"
 namespace kaktus::astor
 {
-	class Body
+
+	class Body 
 	{
 	private:
-		const double RU, TU, MU, VU, FU;
-		const std::string name;
-		double pt;
-		Eigen::Vector6d ps;
+		const string name;
 		//int BodyType;
 		//getframe(pva,subframe)
-		std::unordered_map<int, std::vector<std::shared_ptr<model::Model<DataBase,DataBase>>>> modelListMap;
-		Ephemeris eph;
+		std::unordered_map<int, std::vector<model::Model<DataBase,DataBase>>> modelListMap;
+		Ephemeris &eph;
 	public:
-		Body(std::string name, double MU, double DU)
-			:MU(MU), RU(RU), TU(sqrt(pow3(RU) / invG)), VU(RU / TU), FU(VU / TU),name(name) {}
-		Body(std::string name) :MU(1), RU(1), TU(1), VU(1), FU(1),name(name) {}
-		//void setEphemeris(){}
-		void getPosition(Eigen::Vector3d& p, double time)//相对中心天体
-		{
-			eph.getPosition(p, time);
-		}
-		void getVelocity(Eigen::Vector3d& v, double time) {
-			eph.getVelocity(v, time);
-		}
-		void getPV(Eigen::Vector6d& pv, double time)
-		{
-			eph.getPV(pv, time);
-		}
+		Body(string name, Ephemeris& eph)
+			:name(name), eph(eph) {};
+		void getStateToBody(Body& b, double time, Eigen::Vector6d& state);//to的视角
+		double getStateFromBody(Body& b, double time, Eigen::Vector6d& state);//this的视角
+		string& getSup();
 		//void getForce(Eigen::Vector3d& f, const Eigen::Vector3d& p, const Eigen::Vector3d& v, double time);
 	};
 }

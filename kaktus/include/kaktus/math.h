@@ -1,35 +1,72 @@
 #ifndef KAKTUS_MATH_H
 #define KAKTUS_MATH_H
 #include "kaktus/util.h"
-namespace kaktus::math::pri
-{
-	double KeplerStart3(double ecc, double M)
-	{
-		double
-			t34 = ecc * ecc,
-			t35 = ecc * t34,
-			t33 = cos(M);
-		return M + (-.5 * t35 + ecc + (t34 + 1.5 * t33 * t35) * t33) * sin(M);
-	}
-	double eps3(double ecc, double M, double x)
-	{
-		double
-			t1 = cos(x),
-			t2 = ecc * t1 - 1,
-			t3 = sin(x),
-			t4 = ecc * t3,
-			t5 = t4 - x + M,
-			t6 = t5 / (.5 * t5 * t4 / t2 + t2);
-		return t5 / ((.5 * t3 - 1. / 6. * t1 * t6) * ecc * t6 + t2);
-	}
-}
 namespace kaktus::math
 {
-	double KeplerSlove(double ecc, double M)
+	namespace pri
+	{
+		double es3(double ecc, double M)
+		{
+			double
+				t34 = ecc * ecc,
+				t35 = ecc * t34,
+				t33 = cos(M);
+			return M + (-.5 * t35 + ecc + (t34 + 1.5 * t33 * t35) * t33) * sin(M);
+		}
+		double eps3(double ecc, double M, double x)
+		{
+			double
+				t1 = cos(x),
+				t2 = ecc * t1 - 1,
+				t3 = sin(x),
+				t4 = ecc * t3,
+				t5 = t4 - x + M,
+				t6 = t5 / (.5 * t5 * t4 / t2 + t2);
+			return t5 / ((.5 * t3 - 1. / 6. * t1 * t6) * ecc * t6 + t2);
+		}
+		double hs(double ecc, double H)
+		{
+			if (abs(H) < .01)
+				return H / (ecc - 1.0);
+			return asinh(H / ecc);
+		}
+		double hps(double ecc, double H, double x)
+		{
+			double t1, t2, t3, t4;
+			t1 = cosh(x);
+			t2 = 1 - ecc * t1;
+			t3 = sinh(x);
+			t4 = ecc * t3;
+			return (x + H - t4) / t2;
+		}
+		double X2u(double x, double al)
+		{
+			double
+				pa = 0,
+				pb = 1,
+				a = x / 2,
+				b = 1;
+			double ppa, ppb;
+			double ak = -al * pow2(a), bk;
+			for (int i = 2; i < 15; i++)
+			{
+				ppa = a;
+				ppb = b;
+				bk = 2 * i - 1;
+				a = fma(bk, a, ak * pa);
+				b = fma(bk, b, ak * pb);
+				pa = ppa;
+				pb = ppb;
+			}
+			return a / b;
+		}
+	}
+	double KeplerSlove(double ecc, double n, double dt)
 	{
 		if (ecc < 1)
 		{
-			double E = pri::KeplerStart3(ecc, M);
+			double M = n * dt;
+			double E = pri::es3(ecc, M);
 			double dE = -pri::eps3(ecc, M, E);
 			if (abs(dE) < 5e-16)return E + dE;
 			E += dE;
@@ -41,34 +78,39 @@ namespace kaktus::math
 		}
 		else if (ecc > 1)
 		{
-
-		}
-		else
-		{
-
+			double H = n * dt;
+			double a = pri::hs(ecc, H);
+			double da = pri::hps(ecc, H, a);//ÐèÓÅ»¯
+			do {
+				a -= da;
+			} while (abs(da) > 4e-15);
+			return a;
 		}
 		return 0;
 	}
-	double X2u(double x, double al)
+	SinCos E2f(double ecc, double E)
 	{
-		double
-			pa = 0,
-			pb = 1,
-			a = x/2,
-			b = 1;
-		double ppa, ppb;
-		double ak = -al * pow2(a), bk;
-		for (int i = 2; i < 15; i++)
+		if (ecc < 1)
 		{
-			ppa = a;
-			ppb = b;
-			bk = 2 * i - 1;
-			a = fma(bk, a, ak * pa);
-			b = fma(bk, b, ak * pb);
-			pa = ppa;
-			pb = ppb;
+			const double
+				sinE = sin(E),
+				cosE = cos(E),
+				n = 1 / (1 - ecc * cosE),
+				sinf = sqrt(1 - pow2(ecc)) * sinE * n,
+				cosf = (cosE - ecc) * n;
+			return {sinf,cosf};
 		}
-		return a / b;
+		else if (ecc > 1)
+		{
+			const double
+				sh = sinh(E),
+				ch = cosh(E),
+				n = 1 / (ecc * ch - 1),
+				sinf = sqrt(1 - pow2(ecc)) * sh * n,
+				cosf = (ecc - ch) * n;
+			return {sinf,cosf};
+		}
+
 	}
 	template<typename IN, typename OUT>
 	class Function
