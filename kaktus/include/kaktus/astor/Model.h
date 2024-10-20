@@ -30,6 +30,7 @@ namespace kaktus::astor::model
 	class PlanteRotate:public Model<double,Eigen::Matrix6d>
 	{
 	private:
+
 	public:
 	};
 }

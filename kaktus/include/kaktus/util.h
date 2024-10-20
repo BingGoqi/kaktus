@@ -1,6 +1,7 @@
 #ifndef KAKTUS_UTIL_H
 #define KAKTUS_UTIL_H
 #include <Eigen/Core>
+#include <limits>
 constexpr static double PI = 3.14159265358979323846;
 constexpr static double TAU = 2 * PI;
 constexpr static double G = 6.67e-11;
@@ -15,6 +16,14 @@ namespace Eigen
 }
 namespace kaktus
 {
+	template<typename T> bool ulp(T a,T b,int n)
+	{
+		const T m = std::min(std::fabs(a),std::fabs(b));
+		const T exp = m < std::numeric_limits<T>::min()
+			? std::numeric_limits<T>::min_exponent - 1
+			: std::ilogb(m);
+		return std::fabs(a - b) <= n * std::ldexp(std::numeric_limits<T>::epsilon(), exp);
+	}
 	typedef struct
 	{
 		double sin, cos;
