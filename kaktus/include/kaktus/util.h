@@ -7,8 +7,12 @@ constexpr static double TAU = 2 * PI;
 constexpr static double G = 6.67e-11;
 constexpr static double Light = 299792458;
 constexpr static double invG = 1/G;
-double inline pow2(double a) { return a * a; }
-double inline pow3(double a) { return a * a * a; }
+inline double pow2(double a) { return a * a; }
+inline double pow3(double a) { return a * a * a; }
+inline float pow2(float a) { return a * a; }
+inline float pow3(float a) { return a * a * a; }
+inline int pow2(int a) { return a * a; }
+inline int pow3(int a) { return a * a * a; }
 namespace Eigen
 {
 	typedef Matrix< double, 6, 1 > Vector6d;
@@ -28,6 +32,10 @@ namespace kaktus
 	{
 		double sin, cos;
 	} SinCos;
+	typedef struct
+	{
+		float sin, cos;
+	} SinCosf;
 	class DataBase {};
 	typedef struct
 	{

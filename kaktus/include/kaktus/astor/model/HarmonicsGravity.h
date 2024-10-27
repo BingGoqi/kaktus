@@ -1,63 +1,52 @@
 #ifndef KAKTUS_HARMG_H
 #define KAKTUS_HARMG_H
-#include <cmath>
-#include <array>
+#include "kaktus/util.h"
 namespace kaktus::astor::model
 {
-	template<int num>
 	class HarmonicsGravity
 	{
 	private:
-		inline int getIndex(int n, int m) { (n * (n + 1) >> 1) + m; }
+		inline int Index(int n, int m) { (n * (n + 1) / 2) + m; }
 		int length = getIndex(n, 0);
-		std::array<float, length>& S, & C, & P, & dP;
-		inline float D10(int n, float sf);
-		inline float D11(int n, float sf);
-		inline float D20(int n, float sf);
-		inline float D21(int n, float sf);
-		inline float D30(int n, float sf);
-		inline float D31(int n, float sf);
-		inline float D40(int n, float sf);
-		inline float D41(int n, float sf);
+		std::vector<float>& S, & C, & P;// &dP;
 	public:
-		HarmonicsGravity()
-		{
-			S = std::array();
-		}
-		std::array<float, length>& getSineArray() { return S; }
-		std::array<float, length>& getCoSineArray() { return C; }
-		flust(float sf)
+		HarmonicsGravity();
+		std::vector<float>& getSineArray() { return S; }
+		std::vector<float>& getCoSineArray() { return C; }
+		void flust(SinCosf sc)
 		{
 			int n = 1, m = 1;
+			float temp = 0;
+			P[0] = 1;
+			P[1] = sqrt(3.) * sc.sin;
 			for (int i = 2; i < length; i++)
 			{
-				m++;
-				switch (n - m)
-					case 0:
-						flush(n, m, 2,sf);
-						++i;
-						if (i == length)break;
-						++n;
-						m = 0;
-						flush(n, m, 1,sf);
-						break;
-					case 1:
-						flush(n, m, 3,sf);
-					default:
-						flush(n, m, 4,sf);
+				if (n != m)
+				{
+
+					temp = (n * n / 4) - 1;
+					temp /= (n * n - m * m);
+					temp = sqrt(temp) * sc.sin;
+					P[i] = temp * P[Index(n - 1, m)];
+					if (m < n - 1)
+					{
+						temp = (n / 2 + 1) * (pow2(n - 1) - m * m);
+						temp /= (2 * n - 3) * (n * n - m * m);
+						temp = -sqrt(temp);
+						P[i] += temp * P[Index(n - 2, m)];
+					}
+					++m;
+				}
+				else
+				{
+					temp = n * 2 + 1;
+					temp /= n * 2;
+					temp = sqrt(temp) * sc.cos;
+					P[i] = temp * P[i - n - 1];
+					++n;
+					m = 0;
+				}
 			}
-		}
-		flush(int n, int m, int t,float sf)
-		{
-			switch t
-				case 1:
-					break;
-				case 2:
-					break;
-				case 3:
-					break;
-				case 4:
-					break;
 		}
 	};
 }
