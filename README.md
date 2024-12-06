@@ -24,28 +24,28 @@ ModelType和对应的class Data需要讨论
 
 //
 
-##kaktus/include/
-- util.hpp
+## kaktus/include/
+- util.hpp 工具
 - util.h
 - util
-	- ArrayList.hpp
-- math.hpp
+	- ArrayList.hpp 动态有序数组
+- math.hpp 隐函数求解
 - math.h
 - math
-	- Intergators.hpp
-	- IntEvent.hpp
-	- Interpolators.hpp
+	- Intergators.hpp 数值积分
+	- IntEvent.hpp 积分触发器
+	- Interpolators.hpp 插值
 - astro
 	- Body.hpp
 	- Bodies.hpp
-	- Ephemeris.hpp
-	- model
+	- Ephemeris.hpp 各种星历
+	- model 杂项
 - craft
-	- resource
-	- phycial
-- kos
+	- resource 资源
+	- phycial 物理
+- kos 传感和控制
 	- e
 	- p
-- gis
-- vkfw
-- animtion
+- gis 地形工具
+- animtion 动画化
+- other 杂项
