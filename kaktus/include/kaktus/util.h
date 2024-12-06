@@ -1,46 +1,5 @@
 #ifndef KAKTUS_UTIL_H
 #define KAKTUS_UTIL_H
-#include <Eigen/Core>
-#include <limits>
-constexpr static double PI = 3.14159265358979323846;
-constexpr static double TAU = 2 * PI;
-constexpr static double G = 6.67e-11;
-constexpr static double Light = 299792458;
-constexpr static double invG = 1/G;
-inline double pow2(double a) { return a * a; }
-inline double pow3(double a) { return a * a * a; }
-inline float pow2(float a) { return a * a; }
-inline float pow3(float a) { return a * a * a; }
-inline int pow2(int a) { return a * a; }
-inline int pow3(int a) { return a * a * a; }
-namespace Eigen
-{
-	typedef Matrix< double, 6, 1 > Vector6d;
-	typedef Matrix< double, 6, 6 > Matrix6d;
-}
-namespace kaktus
-{
-	template<typename T> bool ulp(T a,T b,int n)
-	{
-		const T m = std::min(std::fabs(a),std::fabs(b));
-		const T exp = m < std::numeric_limits<T>::min()
-			? std::numeric_limits<T>::min_exponent - 1
-			: std::ilogb(m);
-		return std::fabs(a - b) <= n * std::ldexp(std::numeric_limits<T>::epsilon(), exp);
-	}
-	typedef struct
-	{
-		double sin, cos;
-	} SinCos;
-	typedef struct
-	{
-		float sin, cos;
-	} SinCosf;
-	class DataBase {};
-	typedef struct
-	{
-		double x, y, z, vx, vy, vz, t;
-	};
-	typedef std::string string;
-}
+#include "kaktus/util.hpp"
+#include "kaktus/util/ArrayList.hpp"
 #endif // !KAKTUS_UTIL_H
