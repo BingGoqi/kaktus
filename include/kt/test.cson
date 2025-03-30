@@ -1,0 +1,43 @@
+//kaktus的动态运行时数据模型
+//工作方式：遍历节点，运行注册的脚本
+//大概的脚本函数：func(context,type1,type2,ptr*)//上下文，父节点类型，节点类型（用于过滤），节点指针
+//脚本工作：同步模块间数据，添加数据，修改数据…
+root//自己实现，设计上参考其他项目，但不依赖其他项目,尽量简化
+ speace
+  astoreph
+   eph_p1
+   eph_p2
+   eph_p3...
+   physic_model
+  astors
+   body1
+   body2...
+  skybox
+vulkan
+ viewer
+  window
+  commandGraph
+   camera
+   RefObject
+    sence
+    mat1->4*4
+     body1
+    mat2...
+     body2...
+    skybox
+   computeBounds
+  event...
+physic
+ Factory
+ allocator
+ job_system
+ physics_system
+  body_interface
+  body_shape_settings
+  body1
+   factory1
+   mat1...
+  body2...
+curl
+fio
+lua
