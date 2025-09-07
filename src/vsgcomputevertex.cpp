@@ -10,7 +10,7 @@ int main(int argc, char** argv)
     auto options = vsg::Options::create();
 
     // set up search paths to shaders
-    options->paths = vsg::getEnvPaths("VSG_FILE_PATH");
+    options->paths = std::vector<vsg::Path>{ "E:/vsgExamples-1.1.8/data" };//vsg::getEnvPaths("VSG_FILE_PATH");
 
 #ifdef vsgXchange_all
     // add vsgXchange's support for reading and writing 3rd party file formats

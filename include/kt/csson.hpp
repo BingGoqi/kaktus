@@ -18,7 +18,7 @@ namespace csson {
 	};
 	enum jsontype
 	{
-		j_nul = other + 1, j_bool, j_int, j_string, j_obj, j_array, j_double, other
+		j_nul = defaltype::other + 1, j_bool, j_int, j_string, j_obj, j_array, j_double, other
 	};
 	class cssonObj
 	{

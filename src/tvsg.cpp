@@ -191,16 +191,3 @@ int main()
 	return 0;
 }
 */
-int main()
-{
-	init();
-	vec2d uv = { 0.5,0.5 };
-	vec3d ot = { 0 };
-	int k = 0;
-	for (int i = 0; i < 12; i++)
-	{
-		ot = p20d[i];
-		printf("(%lf,%lf,%lf),", ot.x, ot.y, ot.z);
-	}
-	return 0;
-}
